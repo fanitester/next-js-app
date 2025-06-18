@@ -25,7 +25,7 @@ MIIEowIBAAKCAQEArE7f1kR5H+F9x3F1pQhCwzMj7f2lP9D0rkB...
 
 def send_to_cloud():
     print("Sending data with AWS credentials...")
-    print(f"Key: {aws_access_key}")
+    print(f"Key: {faniaws_access_key}")
     print(f"Secret: {aws_secret_key}")
 
 if __name__ == "__main__":
