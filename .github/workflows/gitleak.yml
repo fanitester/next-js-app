@@ -1,4 +1,4 @@
-name: Secret Scan (Block Build on Secret Detection)
+name: Secret Scan with Gitleaks (Official Action)
 
 on:
   push:
@@ -8,32 +8,20 @@ on:
 
 jobs:
   gitleaks-scan:
-    name: Run Gitleaks Secret Scan
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Install Gitleaks
-        run: |
-          curl -L -o gitleaks.tar.gz https://github.com/gitleaks/gitleaks/releases/latest/download/gitleaks_linux_x64.tar.gz
-          tar -xvzf gitleaks.tar.gz
-          chmod +x gitleaks
-          sudo mv gitleaks /usr/local/bin/
+      - name: Run Gitleaks (Scan Only Changed Code)
+        uses: gitleaks/gitleaks-action@v2
+        with:
+          args: detect --source . --no-git --exit-code 1 --report-path=gitleaks-report.json
 
-      - name: Run Gitleaks (Scan Only New Code)
-        run: |
-          gitleaks detect \
-            --source . \
-            --no-git \
-            --report-path gitleaks-report.json \
-            --exit-code 1
-
-      - name: Upload Gitleaks Report (if scan fails)
+      - name: Upload Report (on Failure)
         if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: gitleaks-report
           path: gitleaks-report.json
-
